@@ -1,0 +1,21 @@
+{
+  "name": "proofex",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./app"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "crypto-js": "^4.1.1",
+    "express": "^4.17.1"
+  }
+}
