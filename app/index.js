@@ -2,6 +2,9 @@ const express = require('express');
 const Blockchain = require('../blockchain');
 const bodyParser = require('body-parser');
 const P2pServer = require('./p2p-server.js');
+const Wallet = require('../wallet/wallet');
+const TransactionPool = require('../wallet/transaction-pool');
+
 
 //get the port from the user or set the default port
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
@@ -15,7 +18,11 @@ app.use(bodyParser.json());
 // create a new blockchain instance
 const blockchain = new Blockchain();
 
-const p2pserver = new P2pServer(blockchain);
+const wallet = new Wallet(Date.now().toString());
+
+const transactionPool = new TransactionPool();
+
+const p2pserver = new P2pServer(blockchain,transactionPool);
 // passing blockchain as a dependency
 
 //EXPOSED APIs
@@ -25,6 +32,23 @@ app.get('/blocks',(req,res)=>{
 
     res.json(blockchain.chain);
 
+});
+
+app.get('/transactions',(req,res)=>{
+    res.json(transactionPool.transactions);
+});
+
+app.post("/transact", (req, res) => {
+    const { to, amount, type } = req.body;
+    const transaction = wallet.createTransaction(
+      to,
+      amount,
+      type,
+      blockchain,
+      transactionPool
+    );
+    p2pserver.broadcastTransaction(transaction);
+    res.redirect("/transactions");
 });
 
 //api to add blocks
